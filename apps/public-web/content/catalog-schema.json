@@ -1,0 +1,6 @@
+{
+  "entryKeys": ["templateId", "version", "family", "sector", "engines", "title", "description", "status", "publishedAt", "technicalStatus", "demo", "previewRoute", "offerId"],
+  "sectorKeys": ["id", "label", "approved"],
+  "demoKeys": ["videoSrc", "posterSrc", "alt", "captionsSrc", "rights"],
+  "mediaRightsKeys": ["owner", "audio", "evidencePath"]
+}

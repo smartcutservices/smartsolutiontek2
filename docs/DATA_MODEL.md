@@ -1,0 +1,39 @@
+﻿# Modèle de données — candidats
+Aucun schéma déployé ou observé. Liste à valider avant UI.
+
+Entités candidates : User, Template/Version, TemplateOffer, Video/MediaAsset, Category, Project/Site, Membership, DomainBinding, ProjectConfig/Revision, QuestionnaireSchema/Session/Answer, Purchase/Entitlement, Order, PaymentIntent/Event, LedgerEntry, WithdrawalRequest, Refund, Notification, AuditLog, AnalyticsAggregate.
+
+Invariants : données privées liées à owner/tenant et project ; validation/autorisation serveur ; client ne modifie ni rôles, soldes, paiements confirmés ni code/config arbitraire ; achat garde prix historique ; paiement SaaS distinct du paiement métier ; ledger append-only/idempotent ; domaine vérifié ; publication atomique.
+
+Par collection : ID, champs, index, règles, rétention/TTL, pagination, coût et migration. Ne rien créer dans le Firebase mentionné avant audit/validation.
+
+## Configuration brouillon du module inscription
+Un contrat local expérimental existe sous `apps/public-web/features/registration/`. Il décrit des programmes, champs conditionnels, consentements, disponibilité, capacité, paiement décrit (sans fournisseur) et règles configurées d’upload. Il accepte `status: draft` uniquement ; il ne s’agit ni d’un modèle Firestore déployé, ni d’un stockage de candidatures. Les décisions tenant, identité, rétention légale, politique de pièces et paiement restent dans le gate P0.
+Registration config draft now includes institution identity/public links, programs and availability/capacity/waitlist, conditional applicant fields, duplicate policy, consents, free/paid description, upload policy and confirmation content. This schema is local and draft-only; it is not an applicant record store or deployed Firestore model.
+## Contrat local du questionnaire universel — non déployé
+`apps/public-web/features/questionnaire/schema.mjs` déclare 21 types de questions, dont une zone géographique définie par options explicites, ainsi que les versions de schéma/question, des contraintes simples et des règles déterministes de visibilité et de caractère obligatoire. Les règles combinées sont AND ; chaque référence doit viser une question précédente, ce qui empêche les cycles. `answerMapping.targetKey` relie les réponses visibles aux valeurs de configuration de l’aperçu local; le mapping strict valide les réponses complètes et l’unicité des cibles. Ce mapping n’exécute aucune expression et ne publie rien. `permissions`, `analyticsTag` et `default` ne sont pas exécutés. Le validateur local contrôle les formes typées, choix et bornes numériques non financières ; les fichiers et les règles de montant/devise exigent une validation serveur. Les réponses de brouillon restent locales.
+
+## Migrations questionnaire — contrat local seulement
+Le moteur `features/questionnaire/migrations.mjs` accepte des opérations déclaratives limitées (renommer une question, mapper des options, mettre une réponse en quarantaine) et un seul chemin sortant par version de schéma. L’aperçu valide le schéma cible et les réponses transformées, puis expose les erreurs/orphelins sans les appliquer. Le résolveur de revue exige une décision explicite pour chaque réponse orpheline (conserver en quarantaine ou écarter), valide les réponses corrigées et exige `approved: true`. Il retourne un résultat de décision sans persistance ni application à un projet. Les réponses JSON sont profondément copiées ; les valeurs circulaires/non JSON sont refusées. Les réponses supprimées de l’état actif restent dans `orphanedAnswers` avec leur raison/migration pour revue.
+
+## Prototype Firestore local — projets et brouillons
+Le seul modèle testé est un prototype local sous `sstTenants/{tenantId}/projects/{projectId}`. À la création, `tenantId` doit être l’UID Firebase du propriétaire; un batch atomique crée un projet `draft` (`ownerUid`, `templateId`, `name`, dates) et son appartenance propriétaire. Le client reçoit uniquement `project:read` et `project:edit`. Les écritures ultérieures du document projet et de l’appartenance sont refusées; l’appartenance n’est lisible que par son titulaire. Les brouillons sont sous `drafts/{draftId}` et portent tenant, projet, UID créateur, template, version de schéma, révision, configuration et horodatage serveur.
+
+Les règles et huit cas de test Firebase Emulator sont locaux et non déployés. L’éditeur visuel n’est pas encore relié à ce modèle : ses brouillons restent dans localStorage/IndexedDB. Ce schéma ne confirme pas la structure finale d’organisation, les collaborateurs ou la sauvegarde des médias.
+
+## Mise à jour — synchronisation de l’éditeur dans les émulateurs locaux
+Le prototype `DirectTemplateEditor` peut maintenant enregistrer la configuration du rendu dans `sstTenants/{uid}/projects/{templateId}/drafts/{draftId}` et ses images dans Firebase Storage sous `sstTenants/{uid}/projects/{templateId}/drafts/images/{fileName}`. Un projet et son appartenance minimale sont créés atomiquement au premier enregistrement. L’utilisateur connecté peut charger explicitement son brouillon; l’ouverture du modèle ne remplace pas son état navigateur automatiquement. Sans compte, l’édition demeure disponible localement et l’interface propose la connexion pour sauvegarder dans l’émulateur.
+
+Ce câblage ne vise que le projet local `demo-smartsolutiontek` et les émulateurs Auth, Firestore et Storage. Il ne démontre pas la persistance Firebase en production. La limite de taille et le type MIME sont contrôlés par les règles Storage; cela ne vérifie pas la signature réelle du fichier. Le projet par template et son ID déterministe sont un choix prototype, à revoir avant une vraie gestion de projets.
+
+### Vérification navigateur — 2026-10-15
+Le test `tools/verify-account-draft-browser.mjs` exerce le chemin réel via l’interface : inscription Auth Emulator, modification de texte et d’image, sauvegarde Firestore/Storage, actualisation, puis chargement volontaire du brouillon et comparaison des deux valeurs. Résultat : réussi. Le test utilise un compte fictif et laisse ses données dans l’Emulator local; il ne crée aucune donnée Firebase distante.
+
+Le test couvre également la suppression confirmée du brouillon et des seuls objets Storage qu’il référence. Le projet et le membership restent dans Firestore : aucune suppression parentale/récursive n’est autorisée par ces règles. Une Function de suppression contrôlée devra être spécifiée avant d’offrir l’effacement complet d’un projet ou compte.
+
+## Contrainte d'identite du brouillon - 2026-10-16
+Dans le prototype actuel, chaque projet a un seul document editable canonique : `sstTenants/{tenantId}/projects/{projectId}/drafts/{projectId}`. La revision avance dans ce document; la lecture par collection et les IDs de draft multiples sont refuses. Une future fonction de versions/historique devra utiliser un schema/versionnage et des permissions distincts plutot que d'ouvrir `list` par defaut.
+## Bornes de configuration - 2026-10-16
+Firestore Rules borne aussi le format accent (`#RRGGBB` ou vide), les maps `text`/`links` a 180 cles, `altTexts` a 40, `fields` a 200, `images` a 40, ainsi que les listes de sections. Ceci borne la taille de configuration de l'editeur; les valeurs internes ne sont pas encore individuellement typees/normalisees en profondeur.
+## Cycle de vie local du compte - 2026-10-16
+La callable `deleteDemoAccount` (demo Emulator seulement) cible le tenant dont le chemin est forme depuis l'UID Auth du demandeur. Elle lit les projets directs, verifie chaque champ d'appartenance avant tout effacement, supprime tout le prefix Storage du tenant, recursivement toute sa donnee Firestore puis l'UID Auth. L'Auth est retire en dernier afin qu'une panne partielle des etapes precedentes soit rejouable. Le client exige reauthentification email/mot de passe et confirmation textuelle. Export complet et retention restent non implementes; aucune promesse de suppression pour production.

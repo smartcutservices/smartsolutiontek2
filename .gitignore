@@ -1,0 +1,57 @@
+﻿# Dependencies
+node_modules/
+.tools/
+.pnp
+.pnp.*
+
+# Build output and caches
+.next/
+.next-*/
+out/
+dist/
+build/
+coverage/
+.turbo/
+.vercel/
+
+# Local environment files. Keep the example template tracked.
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Local Firebase state and logs
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+*.log
+
+# Credentials and private keys
+**/*serviceAccount*.json
+**/*service-account*.json
+**/*firebase-adminsdk*.json
+**/.runtimeconfig.json
+**/.secret.local
+**/.secret.*.local
+**/.npmrc
+!**/.npmrc.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local QA artifacts
+/tmp/
+
+# Local-only master brief contains an unverified Firebase API key
+/SMART_SOLUTIONS_TECH_PROMPT_MAITRE_V0_9_GOD_MODE.md
+

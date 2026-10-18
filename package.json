@@ -1,0 +1,49 @@
+{
+  "name": "smartsolutiontek",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "workspaces": [
+    "apps/public-web",
+    "apps/admin-web",
+    "apps/sites-runtime"
+  ],
+  "scripts": {
+    "emulators:auth": "node tools/start-auth-emulator.mjs",
+    "emulators:local": "node tools/start-auth-emulator.mjs --firestore --storage --functions",
+    "dev:public": "npm run dev --workspace=@smartsolutiontek/public-web",
+    "dev:admin": "npm run dev --workspace=@smartsolutiontek/admin-web",
+    "dev:sites": "npm run dev --workspace=@smartsolutiontek/sites-runtime",
+    "test": "node --test",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "build:all": "npm run build --workspaces --if-present",
+    "media:optimize": "node tools/optimize-static-media.mjs",
+    "test:public": "npm run test --workspace=@smartsolutiontek/public-web",
+    "test:functions": "node --test functions/tests",
+    "test:firestore-rules": "node --test functions/tests/firestore-rules.emulator.mjs",
+    "test:storage-rules": "node --test functions/tests/storage-rules.emulator.mjs",
+    "test:firebase-rules": "node --test functions/tests/firestore-rules.emulator.mjs functions/tests/storage-rules.emulator.mjs",
+    "test:media-pipeline": "npm --prefix functions test",
+    "qa:account-draft": "node tools/verify-account-draft-browser.mjs",
+    "media:portfolio": "node tools/create-portfolio-media.mjs",
+    "media:agency": "node tools/create-agency-media.mjs",
+    "media:craftspeople": "node tools/create-craftspeople-media.mjs",
+    "media:events": "node tools/create-events-media.mjs",
+    "media:ticketing": "node tools/create-ticketing-media.mjs",
+    "media:real-estate": "node tools/create-real-estate-media.mjs",
+    "media:hospitality": "node tools/create-hospitality-media.mjs",
+    "media:tourism": "node tools/create-tourism-media.mjs",
+    "media:vehicles": "node tools/create-vehicles-media.mjs"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "firebase": "12.18.0"
+  },
+  "overrides": {
+    "@firebase/app": "0.16.1",
+    "@firebase/app-compat": "0.5.17"
+  }
+}

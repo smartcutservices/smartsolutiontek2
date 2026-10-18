@@ -1,0 +1,181 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function membershipPath(tenantId, projectId, userId) {
+      return /databases/$(database)/documents/sstTenants/$(tenantId)/projects/$(projectId)/memberships/$(userId);
+    }
+
+    function projectPath(tenantId, projectId) {
+      return /databases/$(database)/documents/sstTenants/$(tenantId)/projects/$(projectId);
+    }
+
+    function validInitialMembership(tenantId, projectId, userId) {
+      let member = request.resource.data;
+      return signedIn()
+        && userId == request.auth.uid
+        && tenantId == request.auth.uid
+        && member.keys().hasOnly(['userId', 'tenantId', 'projectId', 'role', 'status', 'permissions', 'createdAt'])
+        && member.keys().hasAll(['userId', 'tenantId', 'projectId', 'role', 'status', 'permissions', 'createdAt'])
+        && member.userId == request.auth.uid
+        && member.tenantId == tenantId
+        && member.projectId == projectId
+        && member.role == 'owner'
+        && member.status == 'active'
+        && member.permissions is list
+        && member.permissions.size() == 2
+        && 'project:read' in member.permissions
+        && 'project:edit' in member.permissions
+        && member.createdAt == request.time
+        && getAfter(projectPath(tenantId, projectId)).data.ownerUid == request.auth.uid;
+    }
+
+    function validInitialProject(tenantId, projectId) {
+      let project = request.resource.data;
+      let member = getAfter(membershipPath(tenantId, projectId, request.auth.uid)).data;
+      return signedIn()
+        && tenantId == request.auth.uid
+        && project.keys().hasOnly(['tenantId', 'projectId', 'ownerUid', 'templateId', 'name', 'status', 'createdAt', 'updatedAt'])
+        && project.keys().hasAll(['tenantId', 'projectId', 'ownerUid', 'templateId', 'name', 'status', 'createdAt', 'updatedAt'])
+        && project.tenantId == tenantId
+        && project.projectId == projectId
+        && project.ownerUid == request.auth.uid
+        && project.templateId is string
+        && project.templateId.size() > 0
+        && project.templateId.size() <= 80
+        && project.name is string
+        && project.name.size() > 0
+        && project.name.size() <= 100
+        && project.status == 'draft'
+        && project.createdAt == request.time
+        && project.updatedAt == request.time
+        && member.userId == request.auth.uid
+        && member.tenantId == tenantId
+        && member.projectId == projectId
+        && member.role == 'owner'
+        && member.status == 'active'
+        && member.permissions is list
+        && member.permissions.size() == 2
+        && 'project:read' in member.permissions
+        && 'project:edit' in member.permissions;
+    }
+
+    function hasProjectPermission(tenantId, projectId, permission) {
+      let path = membershipPath(tenantId, projectId, request.auth.uid);
+      let member = getAfter(path).data;
+      return signedIn()
+        && member.userId == request.auth.uid
+        && member.tenantId == tenantId
+        && member.projectId == projectId
+        && member.status == 'active'
+        && member.permissions is list
+        && permission in member.permissions;
+    }
+
+    function draftMatchesPath(tenantId, projectId) {
+      return request.resource.data.tenantId == tenantId
+        && request.resource.data.projectId == projectId
+        && validEditorConfiguration(request.resource.data.configuration);
+    }
+
+    function validEditorConfiguration(configuration) {
+      return configuration is map
+        && configuration.keys().hasOnly([
+          'text', 'links', 'accent', 'images', 'altTexts', 'fields',
+          'sectionOrder', 'hiddenSections', 'addedSections'
+        ])
+        && configuration.keys().hasAll([
+          'text', 'links', 'accent', 'images', 'altTexts', 'fields',
+          'sectionOrder', 'hiddenSections', 'addedSections'
+        ])
+        && configuration.text is map
+        && configuration.text.keys().size() <= 180
+        && configuration.links is map
+        && configuration.links.keys().size() <= 180
+        && configuration.accent is string
+        && configuration.accent.size() <= 7
+        && (configuration.accent == '' || configuration.accent.matches('^#[0-9a-fA-F]{6}$'))
+        && configuration.images is map
+        && configuration.images.size() <= 40
+        && configuration.altTexts is map
+        && configuration.altTexts.keys().size() <= 40
+        && configuration.fields is map
+        && configuration.fields.keys().size() <= 200
+        && configuration.sectionOrder is list
+        && configuration.sectionOrder.size() <= 100
+        && configuration.hiddenSections is list
+        && configuration.hiddenSections.size() <= 100
+        && configuration.addedSections is list
+        && configuration.addedSections.size() <= 40;
+    }
+
+    function validDraft(tenantId, projectId) {
+      return request.resource.data.keys().hasOnly([
+          'tenantId', 'projectId', 'createdByUid', 'templateId',
+          'schemaVersion', 'revision', 'configuration', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasAll([
+          'tenantId', 'projectId', 'createdByUid', 'templateId',
+          'schemaVersion', 'revision', 'configuration', 'updatedAt'
+        ])
+        && draftMatchesPath(tenantId, projectId)
+        && request.resource.data.createdByUid is string
+        && request.resource.data.templateId is string
+        && request.resource.data.templateId.size() > 0
+        && request.resource.data.templateId.size() <= 80
+        && request.resource.data.schemaVersion is int
+        && request.resource.data.schemaVersion > 0
+        && request.resource.data.revision is int
+        && request.resource.data.revision > 0
+        && request.resource.data.updatedAt == request.time;
+    }
+
+    match /sstTenants/{tenantId}/projects/{projectId} {
+      allow get: if hasProjectPermission(tenantId, projectId, 'project:read')
+        && resource.data.tenantId == tenantId
+        && resource.data.projectId == projectId;
+      allow create: if validInitialProject(tenantId, projectId);
+      allow list, update, delete: if false;
+
+      match /memberships/{userId} {
+        allow get: if signedIn()
+          && userId == request.auth.uid
+          && resource.data.userId == request.auth.uid
+          && resource.data.tenantId == tenantId
+          && resource.data.projectId == projectId;
+        allow create: if validInitialMembership(tenantId, projectId, userId);
+        allow list, update, delete: if false;
+      }
+
+      match /drafts/{draftId} {
+        allow get: if draftId == projectId
+          && hasProjectPermission(tenantId, projectId, 'project:read')
+          && resource.data.tenantId == tenantId
+          && resource.data.projectId == projectId;
+        allow create: if draftId == projectId
+          && hasProjectPermission(tenantId, projectId, 'project:edit')
+          && validDraft(tenantId, projectId)
+          && request.resource.data.createdByUid == request.auth.uid;
+        allow update: if draftId == projectId
+          && hasProjectPermission(tenantId, projectId, 'project:edit')
+          && resource.data.tenantId == tenantId
+          && resource.data.projectId == projectId
+          && validDraft(tenantId, projectId)
+          && request.resource.data.createdByUid == resource.data.createdByUid
+          && request.resource.data.revision == resource.data.revision + 1;
+        allow delete: if draftId == projectId
+          && hasProjectPermission(tenantId, projectId, 'project:edit')
+          && resource.data.tenantId == tenantId
+          && resource.data.projectId == projectId;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isOwner(tenantId) {
+      return request.auth != null && request.auth.uid == tenantId;
+    }
+
+    function validImage() {
+      return request.resource != null
+        && request.resource.size <= 8 * 1024 * 1024
+        && request.resource.contentType.matches('image/(png|jpeg|webp|avif)');
+    }
+
+    match /sstTenants/{tenantId}/projects/{projectId}/drafts/quarantine/{fileName} {
+      allow create: if isOwner(tenantId) && resource == null && validImage();
+      allow read, update: if false;
+      allow delete: if isOwner(tenantId);
+    }
+
+    match /sstTenants/{tenantId}/projects/{projectId}/drafts/images/{allImages=**} {
+      allow read: if isOwner(tenantId);
+      allow create, update: if false;
+      allow delete: if isOwner(tenantId);
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
