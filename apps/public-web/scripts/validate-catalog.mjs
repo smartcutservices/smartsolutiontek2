@@ -101,9 +101,7 @@ function hasWebVttCue(content) {
 export function validateCatalog(entries, { projectRoot, publicRoot, environment = process.env.VERCEL_ENV } = {}) {
   const errors = [];
   if (!Array.isArray(entries)) return ["Catalog root must be an array."];
-  if (environment === "production" && !entries.some((entry) => isRecord(entry) && entry.status === "published")) {
-    errors.push("Production catalog must contain at least one published demo.");
-  }
+  // The image-based template gallery can ship before optional video demos are curated.
   const ids = new Set();
 
   for (const [index, entry] of entries.entries()) {
