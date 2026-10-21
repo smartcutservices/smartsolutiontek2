@@ -15,7 +15,7 @@ import "./ticketing.css";
 import { getIndexablePublicOrigin } from "./seo";
 const publicOrigin = getIndexablePublicOrigin();
 const siteTitle = "Smart Solutions Tech";
-const siteDescription = "Faites dÃ©filer les rÃ©fÃ©rences visuelles des modÃ¨les et choisissez celle Ã  personnaliser.";
+const siteDescription = "Faites défiler les références visuelles des modèles et choisissez celle à personnaliser.";
 
 export const metadata: Metadata = {
   title: siteTitle,

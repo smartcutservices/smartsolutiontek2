@@ -6,22 +6,22 @@ import { sectors } from "./registry";
 
 const referenceImages: Partial<Record<string, { src: string; width: number; height: number; alt: string }>> = {
   education: { src: "/media/references/school-enrollment-form-reference-v2.png", width: 948, height: 1659, alt: "Formulaire d’inscription scolaire en ligne, format vertical." },
-  training: { src: "/media/references/training-enrollment-reference-v1.png", width: 946, height: 1652, alt: "RÃ©fÃ©rence visuelle du template de formation" },
-  "single-product": { src: "/media/references/single-product-reference-v1.png", width: 801, height: 1962, alt: "RÃ©fÃ©rence visuelle dâ€™une boutique artisanale mono-produit" },
-  "multi-product": { src: "/media/references/multi-product-reference-v1.png", width: 919, height: 1711, alt: "RÃ©fÃ©rence visuelle dâ€™une boutique multi-produits" },
-  restaurant: { src: "/media/references/restaurant-reference-v1.png", width: 789, height: 1993, alt: "RÃ©fÃ©rence visuelle du restaurant haÃ¯tien Lakou" },
-  catering: { src: "/media/references/catering-reference-v1.png", width: 809, height: 1944, alt: "RÃ©fÃ©rence visuelle de lâ€™atelier de pÃ¢tisserie et rÃ©ception Maison Safran" },
-  "service-booking": { src: "/media/references/service-booking-reference-v1.png", width: 803, height: 1958, alt: "RÃ©fÃ©rence visuelle du studio de bien-Ãªtre Serein Studio" },
-  "real-estate": { src: "/media/references/real-estate-reference-v1.webp", width: 940, height: 1672, alt: "RÃ©fÃ©rence visuelle du catalogue immobilier Habitat Nou; biens indicatifs sans disponibilitÃ© confirmÃ©e" },
-  hospitality: { src: "/media/references/hospitality-reference-v1.webp", width: 941, height: 1672, alt: "RÃ©fÃ©rence visuelle de la maison dâ€™hÃ´tes Maison Corail; rÃ©servation non active." },
-  tourism: { src: "/media/references/tourism-reference-v1.webp", width: 941, height: 1672, alt: "RÃ©fÃ©rence visuelle de Lakou Escapades; excursions illustratives et rÃ©servation inactive." },
-  vehicles: { src: "/media/references/vehicles-reference-v1.webp", width: 941, height: 1672, alt: "RÃ©fÃ©rence visuelle de Route Noire; informations automobiles Ã  confirmer." },
-  ticketing: { src: "/media/references/ticketing-reference-v1.webp", width: 941, height: 1672, alt: "RÃ©fÃ©rence visuelle du festival Nouvel Vag; billetterie indicative, sans vente active" },
-  events: { src: "/media/references/events-reference-v1.webp", width: 951, height: 1653, alt: "Reference visuelle du festival Rasin & Rythmes" },
-  craftspeople: { src: "/media/references/craftspeople-reference-v1.webp", width: 951, height: 1653, alt: "Reference visuelle de l?atelier artisanal Atelier Tiko" },
-  agency: { src: "/media/references/agency-reference-v1.webp", width: 951, height: 1653, alt: "Reference visuelle du studio de marque LIGNE 09" },
-  portfolio: { src: "/media/references/portfolio-reference-v1.webp", width: 956, height: 1646, alt: "R\u00e9f\u00e9rence visuelle du portfolio Atelier Solenne" },
-  beauty: { src: "/media/references/beauty-reference-v1.png", width: 941, height: 1672, alt: "RÃ©fÃ©rence visuelle du salon Maison NÃ©roli" },
+  training: { src: "/media/references/training-enrollment-reference-v1.png", width: 946, height: 1652, alt: "Référence visuelle du modèle de formation." },
+  "single-product": { src: "/media/references/single-product-reference-v1.png", width: 801, height: 1962, alt: "Référence visuelle d’une boutique artisanale à produit unique." },
+  "multi-product": { src: "/media/references/multi-product-reference-v1.png", width: 919, height: 1711, alt: "Référence visuelle d’une boutique artisanale à plusieurs produits." },
+  restaurant: { src: "/media/references/restaurant-reference-v1.png", width: 789, height: 1993, alt: "Référence visuelle du restaurant haïtien Lakou" },
+  catering: { src: "/media/references/catering-reference-v1.png", width: 809, height: 1944, alt: "Référence visuelle de l’atelier de pâtisserie et réception Maison Safran" },
+  "service-booking": { src: "/media/references/service-booking-reference-v1.png", width: 803, height: 1958, alt: "Référence visuelle du studio de bien-être Serein Studio" },
+  "real-estate": { src: "/media/references/real-estate-reference-v1.webp", width: 940, height: 1672, alt: "Référence visuelle du catalogue immobilier Habitat Nou; biens indicatifs sans disponibilité confirmée" },
+  hospitality: { src: "/media/references/hospitality-reference-v1.webp", width: 941, height: 1672, alt: "Référence visuelle de la maison d’hôtes Maison Corail; réservation non active." },
+  tourism: { src: "/media/references/tourism-reference-v1.webp", width: 941, height: 1672, alt: "Référence visuelle de Lakou Escapades; excursions illustratives et réservation inactive." },
+  vehicles: { src: "/media/references/vehicles-reference-v1.webp", width: 941, height: 1672, alt: "Référence visuelle de Route Noire; informations automobiles à confirmer." },
+  ticketing: { src: "/media/references/ticketing-reference-v1.webp", width: 941, height: 1672, alt: "Référence visuelle du festival Nouvel Vag; billetterie indicative, sans vente active" },
+  events: { src: "/media/references/events-reference-v1.webp", width: 951, height: 1653, alt: "Référence visuelle du festival Rasin & Rythmes." },
+  craftspeople: { src: "/media/references/craftspeople-reference-v1.webp", width: 951, height: 1653, alt: "Référence visuelle de l’atelier artisanal Atelier Tiko." },
+  agency: { src: "/media/references/agency-reference-v1.webp", width: 951, height: 1653, alt: "Référence visuelle du studio de marque LIGNE 09." },
+  portfolio: { src: "/media/references/portfolio-reference-v1.webp", width: 956, height: 1646, alt: "Référence visuelle du portfolio Atelier Solenne." },
+  beauty: { src: "/media/references/beauty-reference-v1.png", width: 941, height: 1672, alt: "Référence visuelle du salon Maison Néroli" },
 };
 
 function normalize(value: string) {
@@ -88,17 +88,17 @@ export function TemplateGallery() {
                 <span className="sector-eyebrow">{String(index).padStart(2, "0")} / {sectors.length}</span>
                 <h2>{sector.name}</h2>
                 <p>{sector.template}</p>
-                <span className="template-arrow">Ouvrir et Ã©diter le modÃ¨le â†’</span>
+                <span className="template-arrow">Ouvrir et éditer le modèle →</span>
               </Link>
             );
           })}
         </div>
       ) : (
         <div className="template-no-results">
-          <h2>Aucun profil trouvÃ©</h2>
-          <p>Modifiez votre recherche ou rÃ©initialisez les filtres.</p>
+          <h2>Aucun profil trouvé</h2>
+          <p>Modifiez votre recherche ou réinitialisez les filtres.</p>
           <button type="button" onClick={() => { setSectorFilter("all"); setQuery(""); }}>
-            RÃ©initialiser
+            Réinitialiser
           </button>
         </div>
       )}

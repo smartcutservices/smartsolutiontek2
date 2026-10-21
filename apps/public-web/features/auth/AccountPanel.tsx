@@ -17,12 +17,12 @@ type FormMode = "sign-in" | "sign-up" | "reset";
 
 function friendlyAuthError(error: unknown) {
   const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
-  if (code.endsWith("/email-already-in-use")) return "Cette adresse e-mail possÃ¨de dÃ©jÃ  un compte.";
-  if (code.endsWith("/invalid-email")) return "VÃ©rifie le format de lâ€™adresse e-mail.";
-  if (code.endsWith("/weak-password")) return "Choisis un mot de passe dâ€™au moins 6 caractÃ¨res.";
+  if (code.endsWith("/email-already-in-use")) return "Cette adresse e-mail possède déjà un compte.";
+  if (code.endsWith("/invalid-email")) return "Vérifie le format de l’adresse e-mail.";
+  if (code.endsWith("/weak-password")) return "Choisis un mot de passe d’au moins 6 caractères.";
   if (code.endsWith("/invalid-credential") || code.endsWith("/user-not-found") || code.endsWith("/wrong-password")) return "Adresse e-mail ou mot de passe incorrect.";
-  if (code.endsWith("/too-many-requests")) return "Trop de tentatives. RÃ©essaie dans quelques minutes.";
-  return "La demande nâ€™a pas abouti. VÃ©rifie que lâ€™Ã©mulateur local est dÃ©marrÃ© et rÃ©essaie.";
+  if (code.endsWith("/too-many-requests")) return "Trop de tentatives. Réessaie dans quelques minutes.";
+  return "La demande n’a pas abouti. Vérifie que l’émulateur local est démarré et réessaie.";
 }
 
 export function AccountPanel() {
@@ -50,7 +50,7 @@ export function AccountPanel() {
       setUser(currentUser);
       setAuthReady(true);
     }, () => {
-      setError("La session locale nâ€™a pas pu Ãªtre vÃ©rifiÃ©e.");
+      setError("La session locale n’a pas pu être vérifiée.");
       setAuthReady(true);
     });
   }, []);
@@ -66,14 +66,14 @@ export function AccountPanel() {
       if (mode === "sign-up") {
         const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
         await sendEmailVerification(credential.user);
-        setStatus("Compte local crÃ©Ã©. Lâ€™Ã©mulateur a prÃ©parÃ© un e-mail de vÃ©rification.");
+        setStatus("Compte local créé. L’émulateur a préparé un e-mail de vérification.");
         returnToTemplateEditor();
       } else if (mode === "reset") {
         await sendPasswordResetEmail(auth, email.trim());
-        setStatus("Si le compte existe, lâ€™Ã©mulateur a prÃ©parÃ© un lien de rÃ©initialisation.");
+        setStatus("Si le compte existe, l’émulateur a préparé un lien de réinitialisation.");
       } else {
         await signInWithEmailAndPassword(auth, email.trim(), password);
-        setStatus("Connexion locale rÃ©ussie.");
+        setStatus("Connexion locale réussie.");
         returnToTemplateEditor();
       }
     } catch (cause) {
@@ -90,7 +90,7 @@ export function AccountPanel() {
     setStatus("");
     try {
       await sendEmailVerification(user);
-      setStatus("Lâ€™Ã©mulateur a prÃ©parÃ© un nouvel e-mail de vÃ©rification.");
+      setStatus("L’émulateur a préparé un nouvel e-mail de vérification.");
     } catch (cause) {
       setError(friendlyAuthError(cause));
     } finally {
@@ -105,7 +105,7 @@ export function AccountPanel() {
     setError("");
     try {
       await signOut(auth);
-      setStatus("DÃ©connexion rÃ©ussie.");
+      setStatus("Déconnexion réussie.");
     } catch (cause) {
       setError(friendlyAuthError(cause));
     } finally {
@@ -114,24 +114,24 @@ export function AccountPanel() {
   }
 
   return <section className="account-panel" aria-label="Compte Smart Solutions Tech">
-    {!authReady ? <p role="status">Chargement du compte localâ€¦</p> : !getLocalFirebaseAuth() ? <div className="account-disabled" role="status">
-      <b>Le compte local nâ€™est pas encore dÃ©marrÃ©.</b>
-      <p>Cette page se connecte uniquement Ã  lâ€™Ã©mulateur Firebase local `demo-smartsolutiontek` sur le port 9099. Aucun compte rÃ©el ni compte SmartCut ne sera contactÃ©.</p>
+    {!authReady ? <p role="status">Chargement du compte local…</p> : !getLocalFirebaseAuth() ? <div className="account-disabled" role="status">
+      <b>Le compte local n’est pas encore démarré.</b>
+      <p>Cette page se connecte uniquement à l’émulateur Firebase local `demo-smartsolutiontek` sur le port 9099. Aucun compte réel ni compte SmartCut ne sera contacté.</p>
       <code>npm run emulators:auth</code>
     </div> : user ? <div className="account-signed-in" data-account-uid={user.uid}>
       <p className="account-eyebrow">SESSION LOCALE</p>
       <h2>Bonjour</h2>
       <p className="account-email">{user.email}</p>
-      <p>{user.emailVerified ? "Adresse vÃ©rifiÃ©e dans lâ€™Ã©mulateur." : "Adresse Ã  vÃ©rifier dans la boÃ®te de rÃ©ception de lâ€™Ã©mulateur."}</p>
-      {!user.emailVerified && <button type="button" className="account-secondary" disabled={busy} onClick={() => void resendVerification()}>PrÃ©parer un e-mail de vÃ©rification</button>}
-      <button type="button" className="account-primary" disabled={busy} onClick={() => void leaveAccount()}>Se dÃ©connecter</button><AccountDeletionPanel user={user} onDeleted={(count) => setStatus(`Compte supprime avec ${count} projet(s), dans Emulator local.`)} />
+      <p>{user.emailVerified ? "Adresse vérifiée dans l’émulateur." : "Adresse à vérifier dans la boîte de réception de l’émulateur."}</p>
+      {!user.emailVerified && <button type="button" className="account-secondary" disabled={busy} onClick={() => void resendVerification()}>Préparer un e-mail de vérification</button>}
+      <button type="button" className="account-primary" disabled={busy} onClick={() => void leaveAccount()}>Se déconnecter</button><AccountDeletionPanel user={user} onDeleted={(count) => setStatus(`Suppression terminée : compte et projets associés supprimés (${count}) dans l’émulateur local.`)} />
     </div> : <>
       <div className="account-tabs" role="group" aria-label="Type de demande">
         <button type="button" aria-pressed={mode === "sign-in"} onClick={() => { setMode("sign-in"); setError(""); setStatus(""); }}>Connexion</button>
-        <button type="button" aria-pressed={mode === "sign-up"} onClick={() => { setMode("sign-up"); setError(""); setStatus(""); }}>CrÃ©er un compte</button>
+        <button type="button" aria-pressed={mode === "sign-up"} onClick={() => { setMode("sign-up"); setError(""); setStatus(""); }}>Créer un compte</button>
       </div>
-      <h2>{mode === "reset" ? "RÃ©initialiser le mot de passe" : mode === "sign-up" ? "CrÃ©er votre compte" : "Retrouver vos projets"}</h2>
-      <p>{mode === "reset" ? "Un lien sera prÃ©parÃ© dans lâ€™Ã©mulateur local." : "Utilisez un compte de test stockÃ© uniquement dans Firebase Emulator."}</p>
+      <h2>{mode === "reset" ? "Réinitialiser le mot de passe" : mode === "sign-up" ? "Créer votre compte" : "Retrouver vos projets"}</h2>
+      <p>{mode === "reset" ? "Un lien sera préparé dans l’émulateur local." : "Utilisez un compte de test stocké uniquement dans Firebase Emulator."}</p>
       <form onSubmit={(event) => void submit(event)}>
         <label htmlFor="account-email">Adresse e-mail</label>
         <input id="account-email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.currentTarget.value)} />
@@ -139,10 +139,10 @@ export function AccountPanel() {
           <label htmlFor="account-password">Mot de passe</label>
           <input id="account-password" type="password" autoComplete={mode === "sign-up" ? "new-password" : "current-password"} minLength={6} required value={password} onChange={(event) => setPassword(event.currentTarget.value)} />
         </>}
-        <button className="account-primary" type="submit" disabled={busy}>{busy ? "Patientezâ€¦" : mode === "reset" ? "PrÃ©parer la rÃ©initialisation" : mode === "sign-up" ? "CrÃ©er le compte local" : "Se connecter"}</button>
+        <button className="account-primary" type="submit" disabled={busy}>{busy ? "Patientez…" : mode === "reset" ? "Préparer la réinitialisation" : mode === "sign-up" ? "Créer le compte local" : "Se connecter"}</button>
       </form>
-      {mode === "sign-in" && <button className="account-text-button" type="button" onClick={() => { setMode("reset"); setError(""); setStatus(""); }}>Mot de passe oubliÃ© ?</button>}
-      {mode === "reset" && <button className="account-text-button" type="button" onClick={() => { setMode("sign-in"); setError(""); setStatus(""); }}>Retour Ã  la connexion</button>}
+      {mode === "sign-in" && <button className="account-text-button" type="button" onClick={() => { setMode("reset"); setError(""); setStatus(""); }}>Mot de passe oublié ?</button>}
+      {mode === "reset" && <button className="account-text-button" type="button" onClick={() => { setMode("sign-in"); setError(""); setStatus(""); }}>Retour à la connexion</button>}
     </>}
     {status && <p className="account-status" role="status">{status}</p>}
     {error && <p className="account-error" role="alert">{error}</p>}

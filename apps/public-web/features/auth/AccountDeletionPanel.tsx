@@ -28,7 +28,7 @@ export function AccountDeletionPanel({ user, onDeleted }: Props) {
       return;
     }
     if (!user.email || !password) {
-      setError("Entre le mot de passe de ce compte pour confirmer ton identite.");
+      setError("Entre le mot de passe de ce compte pour confirmer ton identité.");
       return;
     }
 
