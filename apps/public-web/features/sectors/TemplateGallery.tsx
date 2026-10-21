@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { sectors } from "./registry";
 
 const referenceImages: Partial<Record<string, { src: string; width: number; height: number; alt: string }>> = {
-  education: { src: "/media/references/school-enrollment-form-reference-v1.png", width: 1536, height: 1024, alt: "Référence du formulaire scolaire professionnel sur ordinateur et téléphone." },
+  education: { src: "/media/references/school-enrollment-form-reference-v2.png", width: 948, height: 1659, alt: "Formulaire d’inscription scolaire en ligne, format vertical." },
   training: { src: "/media/references/training-enrollment-reference-v1.png", width: 946, height: 1652, alt: "RÃ©fÃ©rence visuelle du template de formation" },
   "single-product": { src: "/media/references/single-product-reference-v1.png", width: 801, height: 1962, alt: "RÃ©fÃ©rence visuelle dâ€™une boutique artisanale mono-produit" },
   "multi-product": { src: "/media/references/multi-product-reference-v1.png", width: 919, height: 1711, alt: "RÃ©fÃ©rence visuelle dâ€™une boutique multi-produits" },

@@ -15,7 +15,7 @@ type TemplateImage = {
 };
 
 const templateImages: TemplateImage[] = [
-  { id: "education", name: "Institut Horizon", sector: "Inscription en ligne · Éducation", image: "/media/references/school-enrollment-form-reference-v1.png", width: 1536, height: 1024, alt: "Portail scolaire professionnel, formulaire de candidature en cinq étapes sur ordinateur et téléphone." },
+  { id: "education", name: "Institut Horizon", sector: "Inscription en ligne · Éducation", image: "/media/references/school-enrollment-form-reference-v2.png", width: 948, height: 1659, alt: "Formulaire d’inscription scolaire en ligne, avec les informations de l’élève et du responsable." },
   { id: "training", name: "Lâ€™Atelier des savoirs", sector: "Formations et cours", image: "/media/references/training-enrollment-reference-v1.png", width: 946, height: 1652, alt: "Site de formation avec parcours, accompagnement et demande dâ€™inscription." },
   { id: "single-product", name: "Atelier Ocre", sector: "Commerce mono-produit", image: "/media/references/single-product-reference-v1.png", width: 801, height: 1962, alt: "Page produit pour un sac artisanal en cuir cognac." },
   { id: "multi-product", name: "Maison Sable", sector: "Commerce multi-produits", image: "/media/references/multi-product-reference-v1.png", width: 919, height: 1711, alt: "Boutique artisanale de maison avec collections et sÃ©lection de produits." },

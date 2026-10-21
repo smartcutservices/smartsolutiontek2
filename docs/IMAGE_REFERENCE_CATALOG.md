@@ -6,7 +6,7 @@ Workflow obligatoire : générer une référence idéale par profil avant son re
 
 | # | ID | Secteur | Image de référence | Rendu | Captures / pixel-match |
 |---:|---|---|---|---|---|
-| 1 | education | Éducation et écoles | `apps/public-web/public/media/references/school-enrollment-reference-v1.png` | HTML/CSS dédié en brouillon | QA responsive passée; pixel-match à finir |
+| 1 | education | Éducation et écoles | `apps/public-web/public/media/references/school-enrollment-form-reference-v2.png (948×1659; OpenAI image_gen)` | Formulaire d’inscription simple, une page, en brouillon | rendu desktop/mobile contrôlé; pixel-match à finir |
 | 2 | training | Formations et cours | `apps/public-web/public/media/references/training-enrollment-reference-v1.png` | HTML/CSS dédié en brouillon | QA responsive passée; pixel-match à documenter |
 | 3 | single-product | Commerce mono-produit | `apps/public-web/public/media/references/single-product-reference-v1.png` | HTML/CSS dédié en brouillon | QA Chrome 320/390/768/1440 px; captures dans `docs/visual-evidence/`; page 742×1816 vs ref 801×1962; pixel-match à finir |
 | 4 | multi-product | Commerce multi-produits | `apps/public-web/public/media/references/multi-product-reference-v1.png` | HTML/CSS dédié en brouillon | QA Chrome 320/390/768/1440 px; captures dans `docs/visual-evidence/`; page 742×1372 vs ref 919×1711; écarts visuels à finir |
